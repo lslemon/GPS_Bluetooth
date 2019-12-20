@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "611280957348",
+    "firebase_url": "https://bluetooth-scanner-luke.firebaseio.com",
+    "project_id": "bluetooth-scanner-luke",
+    "storage_bucket": "bluetooth-scanner-luke.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611280957348:android:640aae6006ee7ccca15b31",
+        "android_client_info": {
+          "package_name": "com.example.bluetooth_gps_scanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611280957348-bqo0i3bu5g2hbati175a44jem22ahoq9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCx8D4F_zJrPx1cykXWzemBc1jrK1RTGjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611280957348-bqo0i3bu5g2hbati175a44jem22ahoq9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

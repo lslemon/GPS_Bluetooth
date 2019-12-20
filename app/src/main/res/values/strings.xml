@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Bluetooth_GPS_Scanner</string>
+    <string name="title_activity_maps">BLUETOOTH GPS</string>
+    <string name="device_list">Device List</string>
+</resources>
