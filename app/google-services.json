@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "611280957348-d3c3h6953h7j80hbhgtrjpm3ql0pf2rb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bluetooth_gps_scanner",
+            "certificate_hash": "27e1132a98e56679ffe41d090e56f25e78569edc"
+          }
+        },
+        {
           "client_id": "611280957348-bqo0i3bu5g2hbati175a44jem22ahoq9.apps.googleusercontent.com",
           "client_type": 3
         }

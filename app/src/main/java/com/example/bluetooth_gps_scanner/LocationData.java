@@ -6,30 +6,33 @@ import android.location.LocationListener;
 
 public class LocationData
 {
-    public double latitude;
-    public double longitude;
-    public String deviceName;
-    public String deviceAddress;
-    public String deviceType;
-    public BluetoothDevice device;
-    public long timeStamp;
+    double latitude;
+    double longitude;
+    String deviceName;
+    String deviceAddress;
+    int deviceType;
+    BluetoothDevice device;
+    long timeStamp;
 
-    public LocationData(double latitude, double longitude)
+    LocationData(double latitude, double longitude)
     {
         this.latitude = latitude;
         this.longitude = longitude;
         timeStamp = System.currentTimeMillis();
     }
 
-    public LocationData(double latitude, double longitude, BluetoothDevice device)
+    LocationData(double latitude, double longitude, BluetoothDevice device)
     {
         this.latitude = latitude;
         this.longitude = longitude;
         timeStamp = System.currentTimeMillis();
         this.device = device;
+        deviceAddress = device.getAddress();
+        deviceName = device.getName();
+        deviceType = device.getBluetoothClass().getDeviceClass();
     }
 
-    public LocationData()
+    LocationData()
     {
 
     }

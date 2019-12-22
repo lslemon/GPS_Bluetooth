@@ -31,7 +31,6 @@ import java.util.ArrayList;
 
 public class DeviceListActivity extends AppCompatActivity
 {
-
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef = database.getReference("locations");
     private ListView listView;
@@ -47,26 +46,26 @@ public class DeviceListActivity extends AppCompatActivity
         myRef.addChildEventListener(childEventListener);
     }
 
-    public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice>
+    public class DeviceListAdapter extends ArrayAdapter<LocationData>
     {
 
-        private ArrayList<BluetoothDevice> devices;
+        private ArrayList<LocationData> locationDevices;
         private Context context;
 
         public DeviceListAdapter(Context context, int resourceInt) {
             super(context, resourceInt);
             this.context = context;
-            ArrayList<BluetoothDevice> devices = new ArrayList<>();
+            locationDevices = new ArrayList<>();
         }
 
         @Override
-        public void add(BluetoothDevice device) {
-            devices.add(device);
+        public void add(LocationData location) {
+            locationDevices.add(location);
         }
 
         @Override
-        public BluetoothDevice getItem(int position) {
-            return devices.get(position);
+        public LocationData getItem(int position) {
+            return locationDevices.get(position);
         }
 
         @Override
@@ -81,11 +80,11 @@ public class DeviceListActivity extends AppCompatActivity
                 view.setTag(viewHolder);
             }
 
-            BluetoothDevice device = devices.get(position);
+            LocationData device = locationDevices.get(position);
             ViewHolder holder = (ViewHolder)view.getTag();
-            holder.deviceName.setText(device.getName());
-            holder.addressView.setText(device.getAddress());
-            holder.deviceType.setText(""+device.getType());
+            holder.deviceName.setText(device.deviceName);
+            holder.addressView.setText(device.deviceAddress);
+            holder.deviceType.setText(""+device.deviceType);
             return view;
         }
     }
@@ -109,8 +108,8 @@ public class DeviceListActivity extends AppCompatActivity
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s)
         {
-            LocationData location = dataSnapshot.getValue(LocationData.class);
-            deviceListAdapter.add(location.device);
+            LocationData locationEntry = dataSnapshot.getValue(LocationData.class);
+            deviceListAdapter.add(locationEntry);
         }
 
         @Override
