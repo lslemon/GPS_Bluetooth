@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -33,8 +34,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
+{
+    private final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap mMap;
     //private FirebaseDatabase database = ((BluetoothGPSApplication)getApplicationContext()).getDatabase();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -67,13 +69,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+
+
     private ChildEventListener childEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s)
         {
             LocationData location = dataSnapshot.getValue(LocationData.class);
-            LatLng eng = new LatLng(location.latitude, location.longitude);
-            mMap.addMarker(new MarkerOptions().position(eng).title("Marker"));
+            LatLng loc = new LatLng(location.latitude, location.longitude);
+            mMap.addMarker(new MarkerOptions().position(loc).title(location.toString()));
         }
 
         @Override

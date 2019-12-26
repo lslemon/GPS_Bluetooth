@@ -21,21 +21,32 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class BluetoothService extends Service {
+    private final String TAG = BluetoothService.class.getSimpleName();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef = database.getReference("locations");
     private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
 
 
+    /**
+     * FOLLOWING LINES ARE FOR BINDING SERVICE TO
+     * AN ACTIVITY
+     */
+    public class LocalBinder extends Binder {
+        BluetoothService getService() {
+            return BluetoothService.this;
+        }
+    }
+
+    private final IBinder mBinder = new LocalBinder();
+
     @Override
-    public IBinder onBind(Intent intent) {
-        //startGettingLocations();
+    public IBinder onBind(Intent intent)
+    {
         return mBinder;
     }
 
-
-    @SuppressLint("MissingPermission")
-    //Permissions are clarified in Opening Activity
+    /*//Permissions are clarified in Opening Activity
     public void startGettingLocations(String provider)
     {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -47,10 +58,13 @@ public class BluetoothService extends Service {
                 MIN_TIME_BW_UPDATES,
                 MIN_DISTANCE_CHANGE_FOR_UPDATES,
                 locationListener);
+    }*/
+
+    public LocationListener getLocationListener() {
+        return locationListener;
     }
 
-
-    public LocationListener locationListener = new LocationListener() {
+    private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
@@ -76,17 +90,4 @@ public class BluetoothService extends Service {
 
         }
     };
-
-
-    /**
-     * FOLLOWING LINES ARE FOR BINDING SERVICE TO
-     * AN ACTIVITY
-     */
-    public class LocalBinder extends Binder {
-        BluetoothService getService() {
-            return BluetoothService.this;
-        }
-    }
-
-    private final IBinder mBinder = new LocalBinder();
 }

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public class OpeningActivity extends AppCompatActivity
 {
-
+    private final String TAG = OpeningActivity.class.getSimpleName();
     private Button mapButton;
     private Button listButton;
     private BluetoothService bluetoothService;
@@ -38,9 +38,6 @@ public class OpeningActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.opening_layout);
-        Log.i("HELP", "ME");
-        Intent serviceIntent = new Intent(this, BluetoothService.class);
-        bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
         mapButton = findViewById(R.id.mapButton);
         listButton = findViewById(R.id.listButton);
@@ -60,6 +57,9 @@ public class OpeningActivity extends AppCompatActivity
                 startActivity(listIntent);
             }
         });
+
+        Intent serviceIntent = new Intent(this, BluetoothService.class);
+        bindService(serviceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
     public void showSettingsAlert() {
@@ -109,11 +109,14 @@ public class OpeningActivity extends AppCompatActivity
      * Checks if APP has permissions for location services
      * @return
      */
-    public boolean checkLocationPermission()
+    public void checkLocationPermission()
     {
+        Log.i("TAG", "I'm In");
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean isGPS = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean isNetwork = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100;// Distance in meters
+        long MIN_TIME_BW_UPDATES = 1000 * 600;// Update every 10 minutes
         boolean canGetLocation = true;
         int ALL_PERMISSIONS_RESULT = 101;
 
@@ -128,6 +131,17 @@ public class OpeningActivity extends AppCompatActivity
         if (!isGPS && !isNetwork)
         {
             showSettingsAlert();
+        }
+        else
+        {
+            // check permissions
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (permissionsToRequest.size() > 0) {
+                    requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]),
+                            ALL_PERMISSIONS_RESULT);
+                    canGetLocation = false;
+                }
+            }
         }
 
         if (ContextCompat.checkSelfPermission(this,
@@ -166,32 +180,32 @@ public class OpeningActivity extends AppCompatActivity
                         99);
             }
         }
-        else
-        {
-            // check permissions
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (permissionsToRequest.size() > 0) {
-                    requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]),
-                            ALL_PERMISSIONS_RESULT);
-                    canGetLocation = false;
-                }
-            }
-        }
 
         //Starts requesting location updates
-        if (canGetLocation) {
+        if (canGetLocation)
+        {
             if (isGPS) {
-                bluetoothService.startGettingLocations(LocationManager.GPS_PROVIDER);
+//                bluetoothService.startGettingLocations(LocationManager.GPS_PROVIDER);
+                lm.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES,
+                        bluetoothService.getLocationListener());
+                Log.i("HELLO", "WOOP");
             } else if (isNetwork) {
                 // from Network Provider
-                bluetoothService.startGettingLocations(LocationManager.NETWORK_PROVIDER);
+//                bluetoothService.startGettingLocations(LocationManager.NETWORK_PROVIDER);
+                lm.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATES,
+                        bluetoothService.getLocationListener());
+                Log.i("HELLO", "WOOP");
             }
-            return true;
         }
         else
         {
             Toast.makeText(this, "Can't get location", Toast.LENGTH_SHORT).show();
-            return false;
         }
     }
 
@@ -199,6 +213,7 @@ public class OpeningActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder)
         {
+            Log.i("WORK","WORK");
             bluetoothService = ((BluetoothService.LocalBinder)iBinder).getService();
             OpeningActivity.this.checkLocationPermission();
         }

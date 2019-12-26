@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +27,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DeviceListActivity extends AppCompatActivity
 {
+    private final String TAG = DeviceListActivity.class.getSimpleName();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef = database.getReference("locations");
     private ListView listView;
@@ -43,6 +49,7 @@ public class DeviceListActivity extends AppCompatActivity
         listView = findViewById(R.id.deviceListView);
         deviceListAdapter = new DeviceListAdapter(this, 0);
         listView.setAdapter(deviceListAdapter);
+//        myRef.addValueEventListener(valueEventListener);
         myRef.addChildEventListener(childEventListener);
     }
 
@@ -61,11 +68,17 @@ public class DeviceListActivity extends AppCompatActivity
         @Override
         public void add(LocationData location) {
             locationDevices.add(location);
+            notifyDataSetChanged();
         }
 
         @Override
         public LocationData getItem(int position) {
             return locationDevices.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return locationDevices.size();
         }
 
         @Override
@@ -75,8 +88,7 @@ public class DeviceListActivity extends AppCompatActivity
             {
                 LayoutInflater inflater = ((Activity)context).getLayoutInflater();
                 view = inflater.inflate(R.layout.device_list_entry, null);
-                ViewHolder viewHolder = new ViewHolder((TextView)findViewById(R.id.deviceNameView),
-                        (TextView)findViewById(R.id.addressView), (TextView)findViewById(R.id.deviceTypeView));
+                ViewHolder viewHolder = new ViewHolder(view);
                 view.setTag(viewHolder);
             }
 
@@ -85,22 +97,32 @@ public class DeviceListActivity extends AppCompatActivity
             holder.deviceName.setText(device.deviceName);
             holder.addressView.setText(device.deviceAddress);
             holder.deviceType.setText(""+device.deviceType);
+            if(device.deviceType == 1)
+            {
+                holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_heartbeat));
+            }
+            else
+            {
+                holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_laptop_windows_black_24dp));
+            }
             return view;
         }
     }
 
-    private class ViewHolder
+    public class ViewHolder
     {
         public TextView deviceName;
         public TextView addressView;
         public TextView deviceType;
         public ImageView imageView;
 
-        public ViewHolder(TextView deviceName, TextView addressView, TextView type)
+
+        public ViewHolder(View view)
         {
-            this.deviceName = deviceName;
-            this.addressView = addressView;
-            this.deviceType = type;
+            deviceName = view.findViewById(R.id.deviceNameView);
+            addressView = view.findViewById(R.id.addressView);
+            deviceType = view.findViewById(R.id.deviceTypeView);
+            imageView = view.findViewById(R.id.imageView);
         }
     }
 
@@ -109,7 +131,10 @@ public class DeviceListActivity extends AppCompatActivity
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s)
         {
             LocationData locationEntry = dataSnapshot.getValue(LocationData.class);
-            deviceListAdapter.add(locationEntry);
+            if (locationEntry.deviceName != null)
+            {
+                deviceListAdapter.add(locationEntry);
+            }
         }
 
         @Override
@@ -133,5 +158,4 @@ public class DeviceListActivity extends AppCompatActivity
         }
 
     };
-
 }
