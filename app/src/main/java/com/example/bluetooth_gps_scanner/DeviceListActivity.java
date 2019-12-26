@@ -119,9 +119,9 @@ public class DeviceListActivity extends AppCompatActivity
 
         public ViewHolder(View view)
         {
-            deviceName = view.findViewById(R.id.deviceNameView);
-            addressView = view.findViewById(R.id.addressView);
-            deviceType = view.findViewById(R.id.deviceTypeView);
+            deviceName = view.findViewById(R.id.deviceName);
+            addressView = view.findViewById(R.id.macAddress);
+            deviceType = view.findViewById(R.id.deviceType);
             imageView = view.findViewById(R.id.imageView);
         }
     }

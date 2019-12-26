@@ -111,7 +111,6 @@ public class OpeningActivity extends AppCompatActivity
      */
     public void checkLocationPermission()
     {
-        Log.i("TAG", "I'm In");
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean isGPS = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean isNetwork = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
