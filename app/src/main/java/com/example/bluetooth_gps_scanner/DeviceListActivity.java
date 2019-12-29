@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -22,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bluetooth_gps_scanner.LocationData;
 import com.example.bluetooth_gps_scanner.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,6 +52,12 @@ public class DeviceListActivity extends AppCompatActivity
         listView = findViewById(R.id.deviceListView);
         deviceListAdapter = new DeviceListAdapter(this, 0);
         listView.setAdapter(deviceListAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
 //        myRef.addValueEventListener(valueEventListener);
         myRef.addChildEventListener(childEventListener);
     }
@@ -125,6 +134,13 @@ public class DeviceListActivity extends AppCompatActivity
             imageView = view.findViewById(R.id.imageView);
         }
     }
+
+    private AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+        {
+        }
+    };
 
     private ChildEventListener childEventListener = new ChildEventListener() {
         @Override
