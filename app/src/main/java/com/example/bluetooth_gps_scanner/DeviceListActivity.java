@@ -3,6 +3,7 @@ package com.example.bluetooth_gps_scanner;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.text.Layout;
@@ -52,13 +53,7 @@ public class DeviceListActivity extends AppCompatActivity
         listView = findViewById(R.id.deviceListView);
         deviceListAdapter = new DeviceListAdapter(this, 0);
         listView.setAdapter(deviceListAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-        });
-//        myRef.addValueEventListener(valueEventListener);
+        listView.setOnItemClickListener(itemClickListener);
         myRef.addChildEventListener(childEventListener);
     }
 
@@ -139,6 +134,14 @@ public class DeviceListActivity extends AppCompatActivity
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
         {
+            LocationData locationData = (LocationData)adapterView.getItemAtPosition(position);
+            Intent mapsIntent = new Intent(DeviceListActivity.this, MapsActivity.class);
+            double co_ords[] = new double[2];
+            co_ords[0] = locationData.latitude;
+            co_ords[1] = locationData.longitude;
+            mapsIntent.putExtra("Co-Ords", co_ords);
+            mapsIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(mapsIntent);
         }
     };
 
