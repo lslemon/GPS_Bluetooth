@@ -42,7 +42,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 {
     private final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap mMap;
-    private Marker markerLocation;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef = database.getReference("locations");
 
@@ -54,42 +53,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent)
-    {
-        super.onNewIntent(intent);
-        Log.i(TAG, "CALL ME");
-        double co_ords[] = intent.getDoubleArrayExtra("Co-Ords");
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(new LatLng(co_ords[0], co_ords[1]));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(co_ords[0], co_ords[1])));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(co_ords[0], co_ords[1]), 15f));
-    }
-
-    private void addMarker(LatLng latLng) {
-        if (latLng == null) {
-            return;
-        }
-        if (markerLocation != null) {
-            markerLocation.remove();
-        }
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("New Location");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        if (mMap != null)
-            markerLocation = mMap.addMarker(markerOptions);
-
-
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(latLng.latitude, latLng.longitude))
-                .zoom(16)
-                .build();
-
-        if (mMap != null)
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     /**
@@ -122,8 +85,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(co_ords[0], co_ords[1]), 15f));
         }
     }
-
-
 
     private ChildEventListener childEventListener = new ChildEventListener() {
         @Override

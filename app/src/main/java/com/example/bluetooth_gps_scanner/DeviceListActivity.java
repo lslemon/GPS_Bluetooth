@@ -1,21 +1,15 @@
 package com.example.bluetooth_gps_scanner;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,9 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bluetooth_gps_scanner.LocationData;
-import com.example.bluetooth_gps_scanner.R;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,14 +26,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class DeviceListActivity extends AppCompatActivity
 {
     private final String TAG = DeviceListActivity.class.getSimpleName();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef = database.getReference("locations");
+    private DatabaseReference locationRef = database.getReference("locations");
+    private DatabaseReference deviceRef = database.getReference("devices");
     private ListView listView;
     private DeviceListAdapter deviceListAdapter;
 
@@ -54,35 +43,36 @@ public class DeviceListActivity extends AppCompatActivity
         deviceListAdapter = new DeviceListAdapter(this, 0);
         listView.setAdapter(deviceListAdapter);
         listView.setOnItemClickListener(itemClickListener);
-        myRef.addChildEventListener(childEventListener);
+        //locationRef.addChildEventListener(childEventListener);
+        deviceRef.addChildEventListener(childEventListener);
     }
 
-    public class DeviceListAdapter extends ArrayAdapter<LocationData>
+    public class DeviceListAdapter extends ArrayAdapter<DeviceData>
     {
 
-        private ArrayList<LocationData> locationDevices;
+        private ArrayList<DeviceData> devices;
         private Context context;
 
         public DeviceListAdapter(Context context, int resourceInt) {
             super(context, resourceInt);
             this.context = context;
-            locationDevices = new ArrayList<>();
+            devices = new ArrayList<>();
         }
 
         @Override
-        public void add(LocationData location) {
-            locationDevices.add(location);
+        public void add(DeviceData device) {
+            devices.add(device);
             notifyDataSetChanged();
         }
 
         @Override
-        public LocationData getItem(int position) {
-            return locationDevices.get(position);
+        public DeviceData getItem(int position) {
+            return devices.get(position);
         }
 
         @Override
         public int getCount() {
-            return locationDevices.size();
+            return devices.size();
         }
 
         @Override
@@ -96,11 +86,12 @@ public class DeviceListActivity extends AppCompatActivity
                 view.setTag(viewHolder);
             }
 
-            LocationData device = locationDevices.get(position);
+            DeviceData device = devices.get(position);
             ViewHolder holder = (ViewHolder)view.getTag();
             holder.deviceName.setText(device.deviceName);
             holder.addressView.setText(device.deviceAddress);
             holder.deviceType.setText(""+device.deviceType);
+
             if(device.deviceType == 1)
             {
                 holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_heartbeat));
@@ -134,26 +125,43 @@ public class DeviceListActivity extends AppCompatActivity
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
         {
-            LocationData locationData = (LocationData)adapterView.getItemAtPosition(position);
-            Intent mapsIntent = new Intent(DeviceListActivity.this, MapsActivity.class);
-            double co_ords[] = new double[2];
-            co_ords[0] = locationData.latitude;
-            co_ords[1] = locationData.longitude;
-            mapsIntent.putExtra("Co-Ords", co_ords);
-            mapsIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(mapsIntent);
+            DeviceData deviceData = (DeviceData)adapterView.getItemAtPosition(position);
+            locationRef.child(deviceData.locationKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                {
+                    LocationData locationData = dataSnapshot.getValue(LocationData.class);
+                    Intent mapsIntent = new Intent(DeviceListActivity.this, MapsActivity.class);
+                    double co_ords[] = new double[2];
+                    co_ords[0] = locationData.latitude;
+                    co_ords[1] = locationData.longitude;
+                    mapsIntent.putExtra("Co-Ords", co_ords);
+                    mapsIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(mapsIntent);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
     };
+
+
 
     private ChildEventListener childEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s)
         {
-            LocationData locationEntry = dataSnapshot.getValue(LocationData.class);
-            if (locationEntry.deviceName != null)
+            //LocationData locationEntry = dataSnapshot.getValue(LocationData.class);
+            DeviceData deviceEntry = dataSnapshot.getValue(DeviceData.class);
+            deviceListAdapter.add(deviceEntry);
+
+            /*if (locationEntry.deviceName != null)
             {
                 deviceListAdapter.add(locationEntry);
-            }
+            }*/
         }
 
         @Override
