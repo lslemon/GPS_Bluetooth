@@ -13,10 +13,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class BluetoothService extends Service {
+public class BluetoothService extends Service
+{
     private final String TAG = BluetoothService.class.getSimpleName();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference myRef = database.getReference("locations");
+    private DatabaseReference locationsRef = database.getReference("locations");
 
     /**
      * FOLLOWING LINES ARE FOR BINDING SERVICE TO
@@ -45,10 +46,11 @@ public class BluetoothService extends Service {
         public void onLocationChanged(Location location)
         {
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-            String key =  myRef.push().getKey();
+            String key =  locationsRef.push().getKey();
             LocationData locationData = new LocationData(latLng.latitude, latLng.longitude);
-            myRef.child(key).setValue(locationData);
+            locationsRef.child(key).setValue(locationData);
             Log.i("PRP","Location Changed");
+
         }
 
         @Override
