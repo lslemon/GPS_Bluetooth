@@ -116,26 +116,31 @@ public class DeviceListActivity extends AppCompatActivity
             ViewHolder holder = (ViewHolder)view.getTag();
             holder.deviceName.setText(device.deviceName);
             holder.addressView.setText(device.deviceAddress);
-            holder.deviceType.setText(""+device.deviceType);
+//            holder.deviceType.setText(""+device.deviceType);
 
             if(HEALTH_DEVICES.contains(device.deviceType))
             {
+                holder.deviceType.setText(getString(R.string.health_device));
                 holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_heartbeat));
             }
             else if(device.deviceType == BluetoothClass.Device.COMPUTER_LAPTOP)
             {
+                holder.deviceType.setText(getString(R.string.comp_lap));
                 holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_laptop_windows_black_24dp));
             }
             else if(CELLULAR_DEVICES.contains(device.deviceType))
             {
+                holder.deviceType.setText(getString(R.string.phone));
                 holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_phone_iphone_black_24dp));
             }
             else if(BluetoothClass.Device.AUDIO_VIDEO_HEADPHONES == device.deviceType)
             {
+                holder.deviceType.setText(getString(R.string.headphones));
                 holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_headset_black_24dp));
             }
             else
             {
+                holder.deviceType.setText(getString(R.string.uncategorised));
                 holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_bluetooth_black_24dp));
             }
             return view;

@@ -2,4 +2,9 @@
     <string name="app_name">Bluetooth_GPS_Scanner</string>
     <string name="title_activity_maps">BLUETOOTH GPS</string>
     <string name="device_list">Device List</string>
+    <string name="health_device">Health Monitoring Device</string>
+    <string name="comp_lap">Computer/Laptop</string>
+    <string name="phone">Phone</string>
+    <string name="headphones">Headphones</string>
+    <string name="uncategorised">Uncategorised Device</string>
 </resources>

@@ -12,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
@@ -20,6 +21,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 {
     private final String TAG = MapsActivity.class.getSimpleName();
@@ -27,6 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference locationsRef = database.getReference("locations");
     private DatabaseReference deviceRef = database.getReference("devices");
+    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +111,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             LocationData location = dataSnapshot.getValue(LocationData.class);
             LatLng loc = new LatLng(location.latitude, location.longitude);
-            mMap.addMarker(new MarkerOptions().position(loc).title(location.toString()));
+            Calendar cal = GregorianCalendar.getInstance();
+            cal.setTimeInMillis(location.timeStamp);
+            mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(20)).position(loc).title(dateFormat.format(cal.getTime())));
         }
 
         @Override

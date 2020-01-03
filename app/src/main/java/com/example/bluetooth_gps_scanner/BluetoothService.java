@@ -27,6 +27,7 @@ public class BluetoothService extends Service
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference locationsRef = database.getReference("locations");
     private DatabaseReference deviceRef = database.getReference("devices");
+    private LocationData locationData;
 
     public static boolean handlerNotify = false;
     private ArrayList<BluetoothDevice> devList= new ArrayList<BluetoothDevice>();
@@ -41,12 +42,16 @@ public class BluetoothService extends Service
             Log.i(TAG, "Termiante Scan");
             bluetoothAdapter.cancelDiscovery();
 
-            for(BluetoothDevice device: devList)
+            if(!devList.isEmpty())
             {
-                DeviceData deviceData = new DeviceData(device.getAddress(), device.getName(), device.getBluetoothClass().getDeviceClass(), key);
-                deviceRef.child(device.getAddress()).setValue(deviceData);
+                locationsRef.child(key).setValue(locationData);
+                for(BluetoothDevice device: devList)
+                {
+                    DeviceData deviceData = new DeviceData(device.getAddress(), device.getName(), device.getBluetoothClass().getDeviceClass(), key);
+                    deviceRef.child(device.getAddress()).setValue(deviceData);
+                }
+                devList.clear();
             }
-            devList.clear();
         }
     };
 
@@ -92,8 +97,8 @@ public class BluetoothService extends Service
         {
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
             key =  locationsRef.push().getKey();
-            LocationData locationData = new LocationData(latLng.latitude, latLng.longitude);
-            locationsRef.child(key).setValue(locationData);
+            locationData = new LocationData(latLng.latitude, latLng.longitude);
+//            locationsRef.child(key).setValue(locationData);
             Log.i(TAG, "Location Updated");
             handlerNotify = true;
             scanDevices(BluetoothService.this);
