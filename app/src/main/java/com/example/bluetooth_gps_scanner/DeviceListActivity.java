@@ -1,6 +1,8 @@
 package com.example.bluetooth_gps_scanner;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,6 +36,30 @@ public class DeviceListActivity extends AppCompatActivity
     private DatabaseReference deviceRef = database.getReference("devices");
     private ListView listView;
     private DeviceListAdapter deviceListAdapter;
+
+    private static ArrayList<Integer> HEALTH_DEVICES = new ArrayList<>();
+    private static ArrayList<Integer> CELLULAR_DEVICES = new ArrayList<>();
+    static
+    {
+        HEALTH_DEVICES.add(BluetoothClass.Device.HEALTH_BLOOD_PRESSURE);
+        HEALTH_DEVICES.add(BluetoothClass.Device.HEALTH_DATA_DISPLAY);
+        HEALTH_DEVICES.add(BluetoothClass.Device.HEALTH_UNCATEGORIZED);
+        HEALTH_DEVICES.add(BluetoothClass.Device.HEALTH_GLUCOSE);
+        HEALTH_DEVICES.add(BluetoothClass.Device.HEALTH_PULSE_OXIMETER);
+        HEALTH_DEVICES.add(BluetoothClass.Device.HEALTH_PULSE_RATE);
+        HEALTH_DEVICES.add(BluetoothClass.Device.HEALTH_THERMOMETER);
+        HEALTH_DEVICES.add(BluetoothClass.Device.HEALTH_WEIGHING);
+
+        CELLULAR_DEVICES.add(BluetoothClass.Device.PHONE_CELLULAR);
+        CELLULAR_DEVICES.add(BluetoothClass.Device.PHONE_CORDLESS);
+        CELLULAR_DEVICES.add(BluetoothClass.Device.PHONE_ISDN);
+        CELLULAR_DEVICES.add(BluetoothClass.Device.PHONE_SMART);
+        CELLULAR_DEVICES.add(BluetoothClass.Device.PHONE_UNCATEGORIZED);
+        CELLULAR_DEVICES.add(BluetoothClass.Device.PHONE_MODEM_OR_GATEWAY);
+
+
+
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,13 +118,25 @@ public class DeviceListActivity extends AppCompatActivity
             holder.addressView.setText(device.deviceAddress);
             holder.deviceType.setText(""+device.deviceType);
 
-            if(device.deviceType == 1)
+            if(HEALTH_DEVICES.contains(device.deviceType))
             {
                 holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_heartbeat));
             }
-            else
+            else if(device.deviceType == BluetoothClass.Device.COMPUTER_LAPTOP)
             {
                 holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_laptop_windows_black_24dp));
+            }
+            else if(CELLULAR_DEVICES.contains(device.deviceType))
+            {
+                holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_phone_iphone_black_24dp));
+            }
+            else if(BluetoothClass.Device.AUDIO_VIDEO_HEADPHONES == device.deviceType)
+            {
+                holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_headset_black_24dp));
+            }
+            else
+            {
+                holder.imageView.setImageDrawable(getDrawable(R.drawable.ic_bluetooth_black_24dp));
             }
             return view;
         }
