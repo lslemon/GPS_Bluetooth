@@ -13,6 +13,10 @@ public class DeviceData
         this.deviceName = deviceName;
         this.deviceType = deviceType;
         this.locationKey = locationKey;
+        if(deviceName == null)
+        {
+            this.deviceName = "Unknown Device";
+        }
     }
 
     DeviceData()

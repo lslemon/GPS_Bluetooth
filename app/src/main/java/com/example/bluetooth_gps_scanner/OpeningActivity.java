@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -190,7 +191,7 @@ public class OpeningActivity extends AppCompatActivity
                         MIN_TIME_BW_UPDATES,
                         MIN_DISTANCE_CHANGE_FOR_UPDATES,
                         bluetoothService.getLocationListener());
-                Log.i("HELLO", "WOOP");
+                lm.requestSingleUpdate(LocationManager.GPS_PROVIDER, bluetoothService.getLocationListener(), null);
             } else if (isNetwork) {
                 // from Network Provider
 //                bluetoothService.startGettingLocations(LocationManager.NETWORK_PROVIDER);
@@ -199,7 +200,7 @@ public class OpeningActivity extends AppCompatActivity
                         MIN_TIME_BW_UPDATES,
                         MIN_DISTANCE_CHANGE_FOR_UPDATES,
                         bluetoothService.getLocationListener());
-                Log.i("HELLO", "WOOP");
+                lm.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, bluetoothService.getLocationListener(), null);
             }
         }
         else
@@ -212,7 +213,6 @@ public class OpeningActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder)
         {
-            Log.i("WORK","WORK");
             bluetoothService = ((BluetoothService.LocalBinder)iBinder).getService();
             OpeningActivity.this.checkLocationPermission();
         }

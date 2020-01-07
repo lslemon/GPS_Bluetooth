@@ -31,6 +31,7 @@ public class BluetoothService extends Service
 
     public static boolean handlerNotify = false;
     private ArrayList<BluetoothDevice> devList= new ArrayList<BluetoothDevice>();
+    private ArrayList<String> deviceAddresses = new ArrayList<String>();
     private BluetoothAdapter bluetoothAdapter;
 
     private String key;
@@ -41,16 +42,14 @@ public class BluetoothService extends Service
             handlerNotify = false;
             Log.i(TAG, "Termiante Scan");
             bluetoothAdapter.cancelDiscovery();
-
-            if(!devList.isEmpty())
+            if(deviceAddresses.isEmpty())
+            {
+                locationsRef.child(key).removeValue();
+            }
+            if(!deviceAddresses.isEmpty())
             {
                 locationsRef.child(key).setValue(locationData);
-                for(BluetoothDevice device: devList)
-                {
-                    DeviceData deviceData = new DeviceData(device.getAddress(), device.getName(), device.getBluetoothClass().getDeviceClass(), key);
-                    deviceRef.child(device.getAddress()).setValue(deviceData);
-                }
-                devList.clear();
+                deviceAddresses.clear();
             }
         }
     };
@@ -98,7 +97,7 @@ public class BluetoothService extends Service
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
             key =  locationsRef.push().getKey();
             locationData = new LocationData(latLng.latitude, latLng.longitude);
-//            locationsRef.child(key).setValue(locationData);
+            locationsRef.child(key).setValue(locationData);
             Log.i(TAG, "Location Updated");
             handlerNotify = true;
             scanDevices(BluetoothService.this);
@@ -128,12 +127,22 @@ public class BluetoothService extends Service
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action))
             {
-            // Discovery has found a device. Get the BluetoothDevice
-            // object and its info from the Intent.
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            devList.add(device);
-            Log.i("Device Name: " , device.getName());
-            Log.i("deviceHardwareAddress " , device.getAddress());
+                // Discovery has found a device. Get the BluetoothDevice
+                // object and its info from the Intent.
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if(!deviceAddresses.contains(device.getAddress()))
+                {
+                    deviceAddresses.add(device.getAddress());
+                    String name = device.getName();
+                    if(name == null)
+                    {
+                        name = "Unknown Device";
+                    }
+                    Log.i("Device Name: " , name);
+                    Log.i("deviceHardwareAddress " , device.getAddress());
+                    DeviceData deviceData = new DeviceData(device.getAddress(), device.getName(), device.getBluetoothClass().getDeviceClass(), key);
+                    deviceRef.child(device.getAddress()).setValue(deviceData);
+                }
             }
         }
     };
