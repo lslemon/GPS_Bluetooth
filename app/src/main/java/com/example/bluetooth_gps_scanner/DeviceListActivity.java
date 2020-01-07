@@ -101,6 +101,13 @@ public class DeviceListActivity extends AppCompatActivity
             return devices.size();
         }
 
+        /***
+         * Create view for each entry
+         * @param position
+         * @param convertView
+         * @param parent
+         * @return
+         */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = convertView;
@@ -164,6 +171,10 @@ public class DeviceListActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Handle click events for each entry
+     * Should begin activity and zoom into the selected device's location of discovery
+     */
     private AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)

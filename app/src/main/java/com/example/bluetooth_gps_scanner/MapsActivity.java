@@ -66,6 +66,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         zoom to the selected device
          */
         Intent intent = getIntent();
+        /*
+        IF the intent is from device list activity then
+        when the map is ready it will zoom into the selected
+        marker
+         */
         if(intent.getDoubleArrayExtra("Co-Ords") != null)
         {
             Log.i(TAG, "CALL ME");

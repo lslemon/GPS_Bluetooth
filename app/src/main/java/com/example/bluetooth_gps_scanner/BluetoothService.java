@@ -36,6 +36,9 @@ public class BluetoothService extends Service
 
     private String key;
 
+    /**
+     * Runnable task to clear all lists and termiante scanning
+     */
     final Runnable r = new Runnable() {
         @Override
         public void run() {
@@ -101,6 +104,9 @@ public class BluetoothService extends Service
             Log.i(TAG, "Location Updated");
             handlerNotify = true;
             scanDevices(BluetoothService.this);
+            /*
+            Allow scans to run for a minute
+             */
             new Handler().postDelayed(r, 1000*60);
         }
 
@@ -120,6 +126,10 @@ public class BluetoothService extends Service
         }
     };
 
+    /***
+     * Handles all device discovery broadcasts received from the
+     * system
+     */
     private final BroadcastReceiver mReceiver = new BroadcastReceiver()
     {
         public void onReceive(Context context, Intent intent)
@@ -130,6 +140,7 @@ public class BluetoothService extends Service
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                //Only add devices to firebase if they havent been discovered previously in the most recent scan
                 if(!deviceAddresses.contains(device.getAddress()))
                 {
                     deviceAddresses.add(device.getAddress());
